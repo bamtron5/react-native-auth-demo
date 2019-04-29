@@ -1,7 +1,21 @@
-I ran this on node v10.15.0 with local MongoDB.  I purposely left .env in here for ease of use.  Do not do this in real project.
+I ran this on node v10.15.0 with local MongoDB.
 User and password should be populated alreaady as this is just a login form ATM.
 User: b@b.com
 Password: password
+
+### Config
+1) `touch ./server/.env`
+2) add config to `.env`
+```
+PORT=8080
+MONGO_URI=mongodb://localhost:27017/nativeReactDemo
+SESSION_SECRET=secretkey
+ROOT_DOMAIN=localhost
+ROOT_URL=localhost:3000
+JWT_SECRET=secretkey
+USER_EMAIL=b@b.com
+USER_PASSWORD=password
+```
 
 ### Install and Start API
 1) `cd server`

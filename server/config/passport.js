@@ -1,6 +1,9 @@
 const LocalStrat = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const User = require('./../model/User');
+const passportJWT = require('passport-jwt');
+const { ExtractJwt } = passportJWT;
+const JWTStrat = passportJWT.Strategy;
 
 module.exports = function(passport) {
     passport.use(
@@ -17,6 +20,21 @@ module.exports = function(passport) {
                 });
         })
     );
+
+    passport.use(
+        new JWTStrat({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey: process.env.JWT_SECRET
+        }, function(jwtPayload, cb) {
+            return User.findOne({id: jwtPayload.id})
+                .then(user => {
+                    return cb(null, user);
+                })
+                .catch(err => {
+                    return cb(err);
+                });
+        }
+    ));
 
     passport.serializeUser(function(user, done) {
         done(null, user.id);

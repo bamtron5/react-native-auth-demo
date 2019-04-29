@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View } from 'react-native';
 import { APIV1, JSON_HEADERS } from './../../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Profile extends Component {
     state = {
@@ -8,26 +9,23 @@ class Profile extends Component {
     };
 
     componentDidMount() {
-        this.getUser();
+        AsyncStorage.getItem('token')
+            .then(token => this.getUser(token))
+            .catch(e => console.log(e));
     }
 
-    getUser() {
+    getUser(token) {
         fetch(`${APIV1}/auth/currentuser`, {
             method: 'GET',
             credentials: 'include',
-            headers: JSON_HEADERS
+            headers: {
+                Authorization: `Bearer ${token}`,
+                ...JSON_HEADERS
+            }
         })
-        .catch((err) => {
-            console.log(err);
-        })
-        .then(data => {
-            console.log(data);
-            return data.json();
-        })
-        .then(res => {
-            console.log(res);
-            return this.setState({email: res.email || false});
-        })
+        .catch((err) => console.log(err))
+        .then(data => data.json())
+        .then(res => this.setState({email: res.email || false}));
     }
 
     render() {

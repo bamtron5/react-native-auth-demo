@@ -4,5 +4,6 @@ export const HOST  = Platform.OS === 'ios' ? 'http://localhost:8080' : 'http://1
 export const APIV1 = `${HOST}/api/v1`;
 export const JSON_HEADERS = {
     Accept: 'application/json',
-    'Content-Type': 'application/json'
-};
+    'Content-Type': 'application/json',
+    Origin: 'localhost'
+}

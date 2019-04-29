@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TextInput, View, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView } from 'react-native';
 import { Redirect } from 'react-router-native';
 import { APIV1, JSON_HEADERS } from './../../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Login extends Component {
     state = {
@@ -15,22 +16,24 @@ class Login extends Component {
         this.login = this.login.bind(this);
     }
 
-    async login() {
-        try {
-            const login = await fetch(`${APIV1}/auth/login`, {
-                method: 'POST',
-                headers: JSON_HEADERS,
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    email: this.state.email,
-                    password: this.state.password
-                })
-            });
-            const { auth } = await login.json();
-            this.setState({ isAuth: auth || false });
-        } catch (err) {
-            console.log(err);
-        }
+    login() {
+        fetch(`${APIV1}/auth/login`, {
+            method: 'POST',
+            headers: JSON_HEADERS,
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                email: this.state.email,
+                password: this.state.password
+            })
+        })
+        .catch(e => console.log(e))
+        .then((response) => response.json())
+        .catch(e => console.log(e))
+        .then((data) => {
+            AsyncStorage.setItem('token', data.token)
+                .then(() => this.setState({ isAuth: data.auth || false }))
+                .catch(e => console.log(e));
+        });
     }
 
     render() {
