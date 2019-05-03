@@ -4,8 +4,8 @@ let COOKIE_SETTINGS = {
     httpOnly: true,
     secure: false,
     signed: true,
-    sameSite: true,
-    domain: process.env.ROOT_DOMAIN
+    // sameSite: true,  // TODO would be nice but 10.2.2.2 origin for Android
+    // domain: process.env.ROOT_DOMAIN
 };
 
 module.exports.isDev = (app) => app.get('env') === 'development' ? true : false;
