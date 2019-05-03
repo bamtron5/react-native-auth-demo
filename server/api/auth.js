@@ -4,8 +4,12 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const User = require('./../model/User');
+const createTokens = require('./../util/createTokens');
+const settings = require('./../config/settings');
+const { COOKIE_SETTINGS, refreshMaxAge, accessMaxAge } = settings;
+const guard = require('./../middleware/guard');
 
-router.get('/auth/currentuser', passport.authenticate('jwt'), (req, res, next) => res.json(req.user || {}));
+router.get('/auth/currentuser', (req, res, next) => res.json(req.user || {}));
 
 router.post('/auth/register', function(req, res, next) {
     const {email, password} = req.body;
@@ -23,16 +27,37 @@ router.post('/auth/register', function(req, res, next) {
 router.post('/auth/login',
     passport.authenticate('local'),
     (req, res, next) => {
-        const date = new Date();
-        const exp = date.getTime() + (24 * 60 * 60 * 1000 * 2);
-        const token = jwt.sign({ iat: date.getTime(), exp, user: req.user }, process.env.JWT_SECRET);
-        return res.json({ auth: req.isAuthenticated(), token });
+        if (!req.user) return next({message: 'invalid' });
+        const tokens = createTokens(req.user);
+        res.cookie('refresh_token', tokens.refresh, { ...COOKIE_SETTINGS, maxAge: refreshMaxAge() });
+        res.cookie('access_token', tokens.access, { ...COOKIE_SETTINGS, maxAge: accessMaxAge() });
+        res.json({ auth: req.isAuthenticated() });
     }
 );
 
 router.get('/auth/logout', (req, res, next) => {
     req.logout();
+    res.clearCookie('refresh_token');
+    res.clearCookie('access_token');
     res.json({ auth: req.isAuthenticated() });
+});
+
+router.get('/auth/invalidate', async (req, res, next) => {
+    if (!req.user) return next({ status: 403, message: 'invalid request' });
+    const user = await User.findOne({ _id: req.user.id });
+    if (!user) return next({ status: 403, message: 'invalid request' });
+    user.count += 1;
+    await user.save();
+
+    return res.json({ invalidated: true });
+});
+
+router.get('/auth/adminStuff', guard(['admin']), (req, res, next) => {
+    return res.json({ secretJSON: true });
+});
+
+router.get('/auth/userStuff', guard(['user']), (req, res, next) => {
+    return res.json({ userJSON: true });
 });
 
 module.exports = router;

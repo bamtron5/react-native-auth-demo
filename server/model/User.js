@@ -13,7 +13,8 @@ let UserSchema = new mongoose.Schema({
   },
   passwordHash: {type: String, select: false},
   salt: {type: String, select: false},
-  roles: {type: Array, default: ['user']}
+  roles: {type: Array, default: ['user']},
+  count: {type: Number, default: 0}
 });
 
 UserSchema.method('setPassword', function(password) {
@@ -24,14 +25,6 @@ UserSchema.method('setPassword', function(password) {
 UserSchema.method('validatePassword', function(password) {
   let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
   return (hash === this.passwordHash);
-});
-
-UserSchema.method('generateJWT', function() {
-  return jwt.sign({
-    email: this.email,
-    roles: this.roles,
-    permissions: this.roles.reduce((acc, role) => { return acc.concat(permission[role]); }, [])
-  }, process.env.JWT_SECRET, {expiresIn: '2 days'});
 });
 
 module.exports = mongoose.model('User', UserSchema);
