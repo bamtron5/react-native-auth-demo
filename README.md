@@ -15,6 +15,10 @@ ROOT_URL=localhost:3000
 JWT_SECRET=secretkey
 USER_EMAIL=b@b.com
 USER_PASSWORD=password
+USER_ROLES=user
+ADMIN_EMAIL=a@a.com
+ADMIN_PASSWORD=password
+ADMIN_ROLES=user.admin
 ```
 
 ### Install and Start API
@@ -35,6 +39,6 @@ USER_PASSWORD=password
 3) `react-native run-ios`
 4) Login with user and password
 
-You should be taken to page that displays your email and says you are logged in.  This a session cookie from express.
+You should be taken to page that displays your email and says you are logged in.  This run with a 2 days refresh token and a 15 min access token.  Api's are guarded by roles determined from the jwt which are verified in middleware prior to the API Mount.
 
 GLHF :)

@@ -29,11 +29,7 @@ class Login extends Component {
         .catch(e => console.log(e))
         .then((response) => response.json())
         .catch(e => console.log(e))
-        .then((data) => {
-            AsyncStorage.setItem('token', data.token)
-                .then(() => this.setState({ isAuth: data.auth || false }))
-                .catch(e => console.log(e));
-        });
+        .then((data) => this.setState({ isAuth: data.auth || false }));
     }
 
     render() {

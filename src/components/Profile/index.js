@@ -9,23 +9,23 @@ class Profile extends Component {
     };
 
     componentDidMount() {
-        AsyncStorage.getItem('token')
-            .then(token => this.getUser(token))
-            .catch(e => console.log(e));
+        this.getUser();
     }
 
-    getUser(token) {
+    getUser() {
         fetch(`${APIV1}/auth/currentuser`, {
             method: 'GET',
             credentials: 'include',
             headers: {
-                Authorization: `Bearer ${token}`,
                 ...JSON_HEADERS
             }
         })
         .catch((err) => console.log(err))
         .then(data => data.json())
-        .then(res => this.setState({email: res.email || false}));
+        .then(res => {
+            console.log(res);
+            this.setState({email: res.email || false});
+        });
     }
 
     render() {
