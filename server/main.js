@@ -130,8 +130,14 @@ app.use(async (req, res, next) => {
 // API Mount
 const APIV1 = '/api/v1';
 
-// API Route
+// API Route Native
 app.use(APIV1, auth);
+
+// API Route Web
+// first serve html with token in header
+// set middleware, session
+// app.use(`${APIV1}/web`, csrfProtection, auth);
+
 
 // catch 404 and return error
 app.use((err, req, res, next) => {
