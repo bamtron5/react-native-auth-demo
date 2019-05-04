@@ -21,21 +21,6 @@ module.exports = function(passport) {
         })
     );
 
-    passport.use(
-        new JWTStrat({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.JWT_SECRET
-        }, function(jwtPayload, cb) {
-            return User.findOne({id: jwtPayload.id})
-                .then(user => {
-                    return cb(null, user);
-                })
-                .catch(err => {
-                    return cb(err);
-                });
-        }
-    ));
-
     passport.serializeUser(function(user, done) {
         done(null, user.id);
     });

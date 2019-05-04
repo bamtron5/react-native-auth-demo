@@ -1,6 +1,10 @@
 I ran this on node v10.15.0 with local MongoDB.
-User and password should be populated alreaady as this is just a login form ATM.
+User and password should be populated already as this is just a login form ATM.
+
 User: b@b.com
+Password: password
+
+User: a@a.com
 Password: password
 
 ### Config
@@ -39,6 +43,6 @@ ADMIN_ROLES=user.admin
 3) `react-native run-ios`
 4) Login with user and password
 
-You should be taken to page that displays your email and says you are logged in.  This run with a 2 days refresh token and a 15 min access token.  Api's are guarded by roles determined from the jwt which are verified in middleware prior to the API Mount.
+You should be taken to a page that displays your email and says you are logged in.  This runs with a 2 day refresh token and a 15 min access token. Which is provisioned by a signed cookie served over proxy as http only and secure (https) in production.  Api's are guarded by roles determined from the req which are verified against the Users collection in middleware prior to the API Mount.
 
 GLHF :)

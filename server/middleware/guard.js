@@ -1,17 +1,14 @@
 const jwt = require('jsonwebtoken');
-module.exports = (roles) => {
+module.exports = (reqRoles) => {
     return (req, res, next) => {
-        const accessToken = req.signedCookies['access_token'];
-        if (!accessToken) return next({ status: 401, message: 'Permission Denied' });
-        let token;
-        try {
-            token = jwt.verify(accessToken, process.env.JWT_SECRET);
-        } catch (e) {
-            return next({ status: 401, message: 'Permission Denied' });
-        }
+        if (!req.user) return next({ status: 401, message: 'Permission Denied' });
+        
+        const { roles } = req.user;
 
-        if (!token.roles) return next({ status: 401, message: 'Permission Denied' });
+        if (!roles) return next({ status: 401, message: 'Permission Denied' });
 
-        return roles.every(role => token.roles.some(v => role === v)) ? next() : next({ status: 401, message: 'Permission Denied' });
+        return reqRoles[0] === '*' || reqRoles.every(reqRole => roles.some(role => reqRole === role))
+            ? next() 
+            : next({ status: 401, message: 'Permission Denied' });
     }
 }

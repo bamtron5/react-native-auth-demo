@@ -3,8 +3,6 @@ const settings = require('./config/settings');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const expressValidator = require('express-validator');
 const passport = require('passport');
@@ -116,7 +114,7 @@ app.use(async (req, res, next) => {
   const u = await User.findOne({_id: req.userId});
 
   if (!u || u.count !== data.count) {
-    console.log('intenional invalidation');
+    console.log('intentional invalidation');
     return next();
   }
 

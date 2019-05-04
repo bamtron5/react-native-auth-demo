@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
-const permission = require('./../config/permission');
 
 let UserSchema = new mongoose.Schema({
   email: {
